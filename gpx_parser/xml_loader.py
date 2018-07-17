@@ -12,7 +12,7 @@ ElementTree = mod_etree.ElementTree
 
 def load_xml(xml_string:str, ET = mod_etree) ->ElementTree:
     """
-    :param filename: xml file
+    :param xml_string: xml represented as a single string
     :return: ElementTree
     """
     xml_string = sub(r'\sxmlns="[^"]+"', '', xml_string , count=1)
@@ -30,5 +30,5 @@ if __name__ == '__main__':
 
     fn = '/home/olga/Documents/GPX/load_test/traces10.gpx'
     with open(fn, 'r') as xml_file:
-        load_xml(xml_file.read())
-
+        root = load_xml(xml_file.read())
+        print(root)

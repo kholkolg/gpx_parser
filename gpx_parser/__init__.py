@@ -18,5 +18,5 @@ def parse(xml_or_file):
     from . import parser as mod_parser
 
     parser = mod_parser.GPXParser(xml_or_file)
-    print('My parser init')
+    #print('My parser init')
     return parser.parse()
