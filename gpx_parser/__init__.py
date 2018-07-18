@@ -1,7 +1,7 @@
+from gpx_parser.GPX import GPX
 
 
-
-def parse(xml_or_file):
+def parse(xml_or_file)->GPX:
     """
     Parse xml (string) or file object. This is just an wrapper for
     GPXParser.parse() function.
@@ -19,4 +19,4 @@ def parse(xml_or_file):
 
     parser = mod_parser.GPXParser(xml_or_file)
     #print('My parser init')
-    return parser.parse()
+    return parser.parse

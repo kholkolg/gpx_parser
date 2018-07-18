@@ -1,46 +1,53 @@
 from datetime import datetime
-from typing import Dict, Optional, Union
+from typing import Optional, Union, Callable
 
 from gpx_parser.utils import parse_time
 
 
 class GPXTrackPoint:
 
-    __slots__ = ('values')
+    __slots__ = ('_lat', '_lon', '_time')
 
-    def __init__(self, vals:Dict[str,Optional[Union[str, float]]]):
-        #print('Trkpt __init__:',vals)
-        self.values:Dict[str:Optional[Union[str, float]]] =\
-            {'latitude': vals['lat'], 'longitude': vals['lon'], 'time':vals['time']}
+    def __init__(self, lat:str, lon:str, time:Optional[str]=None):
+        #print('Trkpt __init__:',lat, lon ,time)
+        self._lat:float = float(lat)
+        self._lon:float = float(lon)
+        self._time:Optional[Union[str,datetime]] = time
         #print(vals)
 
     def __repr__(self)->str:
-        if self.values['time']:
-            return 'GPXTrackPoint({}, {}, {})'.format(self.values['latitude'],
-                                       self.values['longitude'],
-                                       self.values['time'])
-        return 'GPXTrackPoint({}, {})'.format(self.values['latitude'],
-                                       self.values['longitude'])
+        if self._time:
+            return 'GPXTrackPoint({}, {}, {})'.format(self._lat, self._lon, self._time)
+        return 'GPXTrackPoint({}, {})'.format(self._lat, self._lon)
 
-    def __getattr__(self, key:str)->Union[float,datetime]:
-        #print('getattr '+ item)
-        if isinstance(self.values[key], str):
-            self.from_string(key)
-        return self.values[key]
+    @property
+    def latitude(self)->float:
+        return  self._lat
 
-    def from_string(self, key:str, time_converter = parse_time):
-        if key != 'time':
-            self.values[key] = float(self.values[key])
-        else:
-            self.values[key] = time_converter(self.values[key])
+    @property
+    def longitude(self) -> float:
+        return self._lon
+
+    @property
+    def time(self, converter:Callable = parse_time)-> datetime:
+        if isinstance(self._time, str):
+            self._time = converter(self._time)
+        return self._time
+
+    @time.setter
+    def time(self, time:Union[datetime,str]):
+        self._time = time
 
 
 if __name__ == '__main__':
 
-    p = GPXTrackPoint({'lat':'50.0164596', 'lon': '14.4547907','time':'2017-11-22T07:25:02Z'})
-    print(p)
-    lat = p.latitude
-    lon = p.longitude
-    time = p.time
-    print(lat, lon, time)
+    p1 = GPXTrackPoint('50.0164596', '14.4547907','2017-11-22T07:25:02Z')
+    print('Point with time: ', p1)
+    print('.latitude=%s, .longitude=%s, .time=%s'%( p1.latitude, p1.longitude, p1.time))
 
+    p2 = GPXTrackPoint('70.6978', '41.0749454')
+    print('Point without time: ',p2)
+    print('.time=',p2.time)
+    p2.time = '1234-11-22T07:25:02Z'
+    print('set time:', p2)
+    print('.time=', p2.time)
