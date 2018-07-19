@@ -1,39 +1,29 @@
-from datetime import datetime
-from typing import Optional, Union, Callable, Tuple
+import math
+from datetime import datetime,timedelta
+from typing import Optional, Callable, Tuple
 
 from gpx_parser.utils import parse_time
 
-# @overload
-# def utf8(value: None) -> None:
-#     pass
-# @overload
-# def utf8(value: bytes) -> bytes:
-#     pass
-# @overload
-# def utf8(value: unicode) -> bytes:
-#     pass
-# def utf8(value):
-#     <actual implementation>
-
-
 
 class GPXTrackPoint:
+
     __slots__ = ('_lat', '_lon', '_time', '_strings')
 
-    def __init__(self, lat:str, lon:str, time:Optional[str]=None):
+    def __init__(self, lat:str, lon:str, time:Optional[str]=None)->None:
         self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
 
     def __repr__(self)->str:
-        return 'GPXTrackPoint(%s, %s, %s)'% self._strings
+        return '<GPXTrackPoint(%s, %s, %s)>'% self._strings
+
+    def __str__(self)->str:
+        return 'trkpt:%s %s %s'% self._strings
 
     @property
     def latitude(self)->float:
-
         try:
             return self._lat
         except AttributeError:
             self._lat:float = float(self._strings[0])
-
         return self._lat
 
     @property
@@ -50,26 +40,64 @@ class GPXTrackPoint:
             return self._time
         except AttributeError:
             try:
-                self._time = converter(self._strings[2])
-                return self._time
+                self._time: datetime = converter(self._strings[2])
             except TypeError:
                 return None
+        return self._time
 
-    @time.setter
-    def time(self, time:str):
-        self._strings = self._strings[:2] + (time,)
+    def adjust_time(self, delta:timedelta)->None:
+        try:
+            self._time = self.time + delta
+        except TypeError:
+            pass
+
+    def time_difference(self, track_point:'GPXTrackPoint')->Optional[float]:
+        time1:Optional[datetime] = self.time
+        time2:Optional[datetime] = track_point.time
+        if not self.time or not track_point.time:
+            return None
+
+        if time1 == time2:
+            return 0
+
+        delta = time1 - time2 if time1 > time2 else time2 - time1
+        return delta.total_seconds()
+
+    def speed_between(self, track_point:'GPXTrackPoint')->Optional[float]:
+        seconds:float = self.time_difference(track_point)
+
+        if not seconds:
+            return  None
+
+        length:float = self.distance_2d(track_point)
+        return length / seconds
+
+    def distance_2d(self, point:'GPXTrackPoint', cos = math.cos, PI = math.pi)->float:
+        ONE_DEGREE:float = 1000. * 10000.8 / 90.
+        coef:float = cos(self.latitude / 180. * PI)
+        x:float = self.latitude - point.latitude
+        y:float = (self.longitude - point.longitude) * coef
+        return math.sqrt(x * x + y * y) * ONE_DEGREE
+
 
 
 
 if __name__ == '__main__':
-
-    p1 = GPXTrackPoint('50.0164596', '14.4547907','2017-11-22T07:25:02Z')
-    print('Point with time: ', p1)
-    print('.latitude=%s, .longitude=%s, .time=%s'%( p1.latitude, p1.longitude, p1.time))
+    p0 = GPXTrackPoint('70.016978', '41.3749454', '2016-12-22T11:50:02Z')
+    print('p0: point with time: ',p0)
+    p1 = GPXTrackPoint('70.024596', '41.4547907','2017-02-22T07:25:02Z')
+    print('p1:point with time: ', p1)
+    print('p1.latitude=%s, p1.longitude=%s, p1.time=%s'%( p1.latitude, p1.longitude, p1.time))
 
     p2 = GPXTrackPoint('70.6978', '41.0749454')
     print('Point without time: ',p2)
-    print('.time=',p2.time)
-    p2.time = '1234-11-22T07:25:02Z'
-    print('set time:', p2)
-    print('.time=', p2.time)
+    print('p2.time=',p2.time)
+
+    print('p0.time_difference(p1) =', p0.time_difference(p1))
+    print('p0.time_difference(p2) =', p0.time_difference(p2))
+
+    print('p0.distance_2d(p1) =', p0.distance_2d(p1))
+    print('p0.distance_2d(p2) =', p0.distance_2d(p2))
+
+    print('p0.speed_between(p1) =', p0.speed_between(p1))
+    print('p0.speed_between(p2) =', p0.speed_between(p2))
