@@ -11,31 +11,25 @@ from gpx_parser.xml_loader import load_xml
 class GPXParser:
 
     def __init__(self, xml_or_file:Union[str, IO]):
-       #print("Init: ", xml_or_file)
         self.init(xml_or_file)
         self.gpx:GPX = GPX()
 
     def init(self, xml_or_file:Union[str, IO], loader:Callable = load_xml):
-        #print('parser.init: ', xml_or_file)
         text:str = xml_or_file.read() if hasattr(xml_or_file, 'read') else xml_or_file
-        #print('text: ', text, type(text))
         self.xml:ET = loader(text)
 
     def parse(self) ->GPX:
         for track in self.xml.iterfind('trk'):
             new_track = Track()
             try:
-                new_track.name = track.find('nae').text
-                print(new_track.name)
+                new_track.name = track.find('name').text
             except AttributeError:
                 pass
             try:
-                new_track.number = track.find('nuber').text
-                print(new_track.number)
+                new_track.number = track.find('number').text
             except AttributeError:
-                print('No number found')
+                pass
             for segment in track.iterfind('trkseg'):
-                print('Segment')
                 new_segment = TrackSegment()
                 for point in segment.iterfind('trkpt'):
                     values = point.attrib
@@ -44,8 +38,7 @@ class GPXParser:
                     try:
                         new_point.time = point.find('time').text
                     except AttributeError:
-                        continue
-                    print(new_point)
+                        pass
                 new_track.append(new_segment)
             self.gpx.append(new_track)
         return self.gpx

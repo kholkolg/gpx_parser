@@ -28,6 +28,7 @@ def  measure_time1(fname:str):
     gpx = parser.parse()
 
 
+
 def measure_time(test_dir:str, result_dir:str):
 
     filenames:List[str] = [path.join(test_dir, fn) for fn in listdir(test_dir)]
@@ -43,12 +44,12 @@ def measure_time(test_dir:str, result_dir:str):
     string += '\n\n\nTotal time: {:10.2f} minutes\n'.format(total_time / 60)
     print(string)
 
-    result_fn:str = path.join(result_dir, 'descr_try_catch_' + get_time()+ '.txt')
+    result_fn:str = path.join(result_dir, 'small_files_with_many_attributes' + '.txt')
     with open(result_fn, 'w') as out_file:
         out_file.write(string)
 
 
-TEST_DIR = "/home/olga/Documents/GPX/load_test"
+TEST_DIR = "/home/olga/Documents/GPX/test_files"
 RESULTS_DIR = "/home/olga/Documents/GPX/test_results"
 
 measure_time(TEST_DIR, RESULTS_DIR)
