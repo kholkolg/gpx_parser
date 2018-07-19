@@ -46,6 +46,10 @@ class GPXTrack:
     def number(self)->int:
         return self._number
 
+    @number.setter
+    def number(self,num:str):
+        self._number = int(num)
+
     @property
     def segments(self)->List[TrackSegment]:
         return self._segments

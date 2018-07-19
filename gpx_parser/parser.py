@@ -23,23 +23,29 @@ class GPXParser:
 
     def parse(self) ->GPX:
         for track in self.xml.iterfind('trk'):
-            new_track = Track(track[0].text, track[1].text)
+            new_track = Track()
+            try:
+                new_track.name = track.find('nae').text
+                print(new_track.name)
+            except AttributeError:
+                pass
+            try:
+                new_track.number = track.find('nuber').text
+                print(new_track.number)
+            except AttributeError:
+                print('No number found')
             for segment in track.iterfind('trkseg'):
+                print('Segment')
                 new_segment = TrackSegment()
                 for point in segment.iterfind('trkpt'):
                     values = point.attrib
-                    try:
-                        values['time'] = point.find('time').text
-                    except AttributeError:
-                        values['time'] = None
                     new_point = TrackPoint(values['lat'], values['lon'])
-
-                    #
-                    # t = point.find('time')
-                    # if t is not None:
-                    #     new_point.time = t.text
-
                     new_segment.append(new_point)
+                    try:
+                        new_point.time = point.find('time').text
+                    except AttributeError:
+                        continue
+                    print(new_point)
                 new_track.append(new_segment)
             self.gpx.append(new_track)
         return self.gpx
@@ -50,7 +56,7 @@ if __name__ == '__main__':
     fn = '/home/olga/Documents/GPX/test1.gpx'
     with open(fn, 'r') as xml_file:
         parser = GPXParser(xml_file)
-    gpx = parser.parse
+    gpx = parser.parse()
     print(gpx)
     print(len(gpx))
     for track in gpx:

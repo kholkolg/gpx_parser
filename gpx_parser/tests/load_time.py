@@ -14,7 +14,7 @@ MB = 1000*1000
 def timer(func:Callable)->Callable:
     @wraps(func)
     def wrapper(*args, **kwargs)->float:
-        best_time = min(timeit.Timer(lambda:func(*args, **kwargs)).repeat(repeat=10, number=1))
+        best_time = min(timeit.Timer(lambda:func(*args, **kwargs)).repeat(repeat=2, number=1))
         print(args)
         print('time = ', best_time)
         return best_time
