@@ -4,6 +4,9 @@ from gpx_parser.GPXTrack import GPXTrack as Track
 
 
 class GPX:
+    """
+    
+    """
 
     __slots__ = ('_version', '_creator', '_tracks')
 
@@ -65,6 +68,11 @@ class GPX:
 
     def remove(self, item:Track):
         self._tracks.remove(item)
+
+    def to_xml(self)->str:
+        #TODO
+        return 'Not yet implemented'
+        
 
 
 

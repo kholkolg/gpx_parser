@@ -32,13 +32,16 @@ class GPXParser:
             for segment in track.iterfind('trkseg'):
                 new_segment = TrackSegment()
                 for point in segment.iterfind('trkpt'):
+                   # print('New point')
                     values = point.attrib
+                   # print('Values: ', values)
                     new_point = TrackPoint(values['lat'], values['lon'])
                     new_segment.append(new_point)
                     try:
                         new_point.time = point.find('time').text
                     except AttributeError:
                         pass
+                    print(new_point)
                 new_track.append(new_segment)
             self.gpx.append(new_track)
         return self.gpx

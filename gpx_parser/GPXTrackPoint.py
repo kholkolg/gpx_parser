@@ -1,46 +1,64 @@
 from datetime import datetime
-from typing import Optional, Union, Callable
+from typing import Optional, Union, Callable, Tuple
 
 from gpx_parser.utils import parse_time
 
+# @overload
+# def utf8(value: None) -> None:
+#     pass
+# @overload
+# def utf8(value: bytes) -> bytes:
+#     pass
+# @overload
+# def utf8(value: unicode) -> bytes:
+#     pass
+# def utf8(value):
+#     <actual implementation>
+
+
 
 class GPXTrackPoint:
-
-    __slots__ = ('_lat', '_lon', '_time')
+    __slots__ = ('_lat', '_lon', '_time', '_strings')
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None):
-        #print('Trkpt __init__:',lat, lon ,time)
-        self._lat:Union[str,float] = lat
-        self._lon:Union[str,float] = lon
-        self._time:Optional[Union[str,datetime]] = time
-        #print(vals)
+        self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
 
     def __repr__(self)->str:
-        if self._time:
-            return 'GPXTrackPoint({}, {}, {})'.format(self._lat, self._lon, self._time)
-        return 'GPXTrackPoint({}, {})'.format(self._lat, self._lon)
+        return 'GPXTrackPoint(%s, %s, %s)'% self._strings
 
     @property
     def latitude(self)->float:
-        if isinstance(self._lat, str):
-            self._lat = float(self._lat)
-        return  self._lat
+
+        try:
+            return self._lat
+        except AttributeError:
+            self._lat:float = float(self._strings[0])
+
+        return self._lat
 
     @property
     def longitude(self) -> float:
-        if isinstance(self._lon, str):
-            self._lon = float(self._lon)
+        try:
+            return self._lon
+        except AttributeError:
+            self._lon: float = float(self._strings[1])
         return self._lon
 
     @property
-    def time(self, converter:Callable = parse_time)-> datetime:
-        if isinstance(self._time, str):
-            self._time = converter(self._time)
-        return self._time
+    def time(self, converter:Callable = parse_time)-> Optional[datetime]:
+        try:
+            return self._time
+        except AttributeError:
+            try:
+                self._time = converter(self._strings[2])
+                return self._time
+            except TypeError:
+                return None
 
     @time.setter
-    def time(self, time:Union[datetime,str]):
-        self._time = time
+    def time(self, time:str):
+        self._strings = self._strings[:2] + (time,)
+
 
 
 if __name__ == '__main__':
