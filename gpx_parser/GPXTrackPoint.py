@@ -10,8 +10,8 @@ class GPXTrackPoint:
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None):
         #print('Trkpt __init__:',lat, lon ,time)
-        self._lat:float = float(lat)
-        self._lon:float = float(lon)
+        self._lat:Union[str,float] = lat
+        self._lon:Union[str,float] = lon
         self._time:Optional[Union[str,datetime]] = time
         #print(vals)
 
@@ -22,10 +22,14 @@ class GPXTrackPoint:
 
     @property
     def latitude(self)->float:
+        if isinstance(self._lat, str):
+            self._lat = float(self._lat)
         return  self._lat
 
     @property
     def longitude(self) -> float:
+        if isinstance(self._lon, str):
+            self._lon = float(self._lon)
         return self._lon
 
     @property

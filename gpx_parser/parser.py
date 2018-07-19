@@ -21,7 +21,6 @@ class GPXParser:
         #print('text: ', text, type(text))
         self.xml:ET = loader(text)
 
-    @property
     def parse(self) ->GPX:
         for track in self.xml.iterfind('trk'):
             new_track = Track(track[0].text, track[1].text)
@@ -29,21 +28,19 @@ class GPXParser:
                 new_segment = TrackSegment()
                 for point in segment.iterfind('trkpt'):
                     values = point.attrib
-                    # if not ('lon' in values.keys() or 'lat' in values.keys()):
-                    #     print('Latitude or longitude missing')
-                    #     continue
-                    # if values['lat'] is None or values['lon'] is None:
-                    #     print('Latitude or longitude missing')
-                    #     continue
+                    try:
+                        values['time'] = point.find('time').text
+                    except AttributeError:
+                        values['time'] = None
                     new_point = TrackPoint(values['lat'], values['lon'])
-                    t = point.find('time')
-                    if t is not None:
-                        new_point.time = t.text
+
+                    #
+                    # t = point.find('time')
+                    # if t is not None:
+                    #     new_point.time = t.text
 
                     new_segment.append(new_point)
                 new_track.append(new_segment)
-            #print('Name: ' + track[0].text)
-            #print('Number: ' + track[1].text)
             self.gpx.append(new_track)
         return self.gpx
 
