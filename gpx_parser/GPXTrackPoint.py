@@ -1,15 +1,17 @@
-import math
+from math import cos, pi, sqrt
 from datetime import datetime,timedelta
 from typing import Optional, Callable, Tuple
-
+from collections import namedtuple
 from gpx_parser.utils import parse_time
 
+Point = namedtuple('Point', ['lat', 'lon', 'time'])
 
 class GPXTrackPoint:
 
     __slots__ = ('_lat', '_lon', '_time', '_strings')
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None)->None:
+        #TODO make it named tuple
         self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
 
     def __repr__(self)->str:
@@ -45,6 +47,13 @@ class GPXTrackPoint:
                 return None
         return self._time
 
+    def to_xml(self)->str:
+        xml:str = '\n<trkpt lat="{}" lon="{}"'.format(self.latitude, self.longitude)
+        if not self.time:
+            return xml+'>'
+        else:
+            xml+='>\n<time>{}</time>\n</trkpt>'.format(self._strings[2])
+        return xml
 
     def time_difference(self, track_point:'GPXTrackPoint')->Optional[float]:
         time1:Optional[datetime] = self.time
@@ -54,7 +63,7 @@ class GPXTrackPoint:
 
         if time1 == time2:
             return 0
-        delta = time1 - time2 if time1 > time2 else time2 - time1
+        delta:timedelta = time1 - time2 if time1 > time2 else time2 - time1
         return delta.total_seconds()
 
     def speed_between(self, track_point:'GPXTrackPoint')->Optional[float]:
@@ -65,12 +74,12 @@ class GPXTrackPoint:
         length:float = self.distance_2d(track_point)
         return length / seconds
 
-    def distance_2d(self, point:'GPXTrackPoint', cos = math.cos, PI = math.pi)->float:
+    def distance_2d(self,point:'GPXTrackPoint')->float:
         ONE_DEGREE:float = 1000. * 10000.8 / 90.
-        coef:float = cos(self.latitude / 180. * PI)
+        coef:float = cos(self.latitude / 180. * pi)
         x:float = self.latitude - point.latitude
         y:float = (self.longitude - point.longitude) * coef
-        return math.sqrt(x * x + y * y) * ONE_DEGREE
+        return sqrt(x * x + y * y) * ONE_DEGREE
 
 
 

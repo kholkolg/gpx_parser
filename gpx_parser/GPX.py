@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, List, Union, Iterator, Iterable, Tuple
 import math as mod_math
 
@@ -71,9 +72,22 @@ class GPX:
         self._tracks.remove(item)
 
     def to_xml(self)->str:
-        #TODO
-        return 'Not yet implemented'
-        
+
+        version:str = self.version if self.version else '1.1'
+        creator:str = self.creator if self.creator else 'gpx_parser.py'
+
+        line1:str = '<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/'))
+        line2:str = 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        line3:str = 'xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/'))
+        line4:str = 'http://www.topografix.com/GPX/{}/gpx.xsd"'.format(version.replace('.','/'))
+        line5:str = 'version="{}" '.format(version)
+        line6:str = 'creator="{}">'.format(creator)
+
+        tracks = [trk.to_xml() for trk in self._tracks]
+        result = [line1, line2, line3, line4, line5, line6]
+        result.extend(tracks)
+        result.append('\n</gpx>')
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' + ''.join(result)
 
     def reduce_points(self, max_points_no=None, min_distance=None)->None:
         """
@@ -109,9 +123,11 @@ class GPX:
         for track in self.tracks:
             track.reduce_points(min_distance)
 
+    def length_2d(self)->float:
+        return sum(map(lambda tr: tr.length_2d(), self._tracks))
 
 
-    def get_time_bounds(self)->Tuple[float, float]:
+    def get_time_bounds(self)->Tuple[datetime, datetime]:
         """
         Gets the time bounds (start and end) of the GPX file.
 
@@ -135,53 +151,51 @@ class GPX:
 
         return start_time, end_time
 
-    def get_bounds(self):
-        """
-        Gets the latitude and longitude bounds of the GPX file.
+    def get_bounds(self)->Tuple[float, float, float, float]:
 
-        Returns
-        ----------
-        bounds : Bounds named tuple
-            min_latitude : float
-                Minimum latitude of track in decimal degrees [-90, 90]
-            max_latitude : float
-                Maxium latitude of track in decimal degrees [-90, 90]
-            min_longitude : float
-                Minium longitude of track in decimal degrees [-180, 180]
-            max_longitude : float
-                Maxium longitude of track in decimal degrees [-180, 180]
-        """
-        min_lat = None
-        max_lat = None
-        min_lon = None
-        max_lon = None
-        for track in self.tracks:
-            bounds = track.get_bounds()
+        all_points = [pt for tr in self._tracks for seg  in tr.segments for pt in seg.points]
+        min_lat = min(map(lambda pt :pt.latitude, all_points))
+        max_lat = max(map(lambda pt :pt.latitude, all_points))
+        min_lon = min(map(lambda pt :pt.longitude, all_points))
+        max_lon = max(map(lambda pt :pt.longitude, all_points))
 
-            if not mod_utils.is_numeric(min_lat) or bounds.min_latitude < min_lat:
-                min_lat = bounds.min_latitude
-            if not mod_utils.is_numeric(max_lat) or bounds.max_latitude > max_lat:
-                max_lat = bounds.max_latitude
-            if not mod_utils.is_numeric(min_lon) or bounds.min_longitude < min_lon:
-                min_lon = bounds.min_longitude
-            if not mod_utils.is_numeric(max_lon) or bounds.max_longitude > max_lon:
-                max_lon = bounds.max_longitude
+        return min_lat, max_lat, min_lon, max_lon
 
-        return GPXBounds(min_lat, max_lat, min_lon, max_lon)
 
     def get_points_no(self):
-        """
-        Get the number of points in all segments of all track.
+        return sum(map(lambda tr: tr.get_point() for tr in self._tracks))
 
-        Returns
-        ----------
-        num_points : integer
-            Number of points in GPX
+
+
+    def walk(self, only_points=False):
         """
-        result = 0
-        for track in self.tracks:
-            result += track.get_points_no()
-        return result
+        Generator used to iterates through points in GPX file
+
+        Parameters
+        ----------
+        only_point s: boolean
+            Only yield points while walking
+
+        Yields
+        ----------
+        point : GPXTrackPoint
+            Point in the track
+        track_no : integer
+            Index of track containint point. This is suppressed if only_points
+            is True.
+        segment_no : integer
+            Index of segment containint point. This is suppressed if only_points
+            is True.
+        point_no : integer
+            Index of point. This is suppressed if only_points is True.
+        """
+        for track_no, track in enumerate(self.tracks):
+            for segment_no, segment in enumerate(track.segments):
+                for point_no, point in enumerate(segment.points):
+                    if only_points:
+                        yield point
+                    else:
+                        yield point, track_no, segment_no, point_no
 
 
 

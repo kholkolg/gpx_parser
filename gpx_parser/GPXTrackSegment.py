@@ -58,10 +58,7 @@ class GPXTrackSegment:
         """
         Gets the number of points in segment.
         TODO remove??
-        Returns
-        ----------
-        num_points : integer
-            Number of points in segment
+
         """
         return len(self._points)
 
@@ -69,36 +66,26 @@ class GPXTrackSegment:
     def reduce_points(self, min_distance:float)->None:
         reduced_points = [self.points[0],]
         for point in self.points[1:]:
-            if reduced_points:
-                distance = reduced_points[-1].distance_2d(point)
-                if distance >= min_distance:
-                    reduced_points.append(point)
+            distance = reduced_points[-1].distance_2d(point)
+            if distance >= min_distance:
+                reduced_points.append(point)
         self.points = reduced_points
 
 
     def length_2d(self)->float:
-        return sum(map(lambda t :t[0].distance_2d(t[1]), zip(self.points[:-1],
-                                                            self.points[0:])))
+
+        return sum(map(lambda t :t[0].distance_2d(t[1]),
+                       zip(self.points[1:],
+                           self.points[:-1])))
 
 
     def split(self, point_no:int)->('GPXTrackSegment','GPXTrackSegment'):
-
         part_1 = self.points[:point_no + 1]
         part_2 = self.points[point_no + 1:]
         return GPXTrackSegment(part_1), GPXTrackSegment(part_2)
 
-    def get_time_bounds(self)->Tuple[datetime, datetime]:
-        """
-        Gets the time bound (start and end) of the segment.
 
-        returns
-        ----------
-        time_bounds : TimeBounds named tuple
-            start_time : datetime
-                Start time of the first segment in track
-            end time : datetime
-                End time of the last segment in track
-        """
+    def get_time_bounds(self)->Tuple[Optional[datetime], Optional[datetime]]:
         start_time = None
         end_time = None
 
@@ -108,25 +95,9 @@ class GPXTrackSegment:
                     start_time = point.time
                 if point.time:
                     end_time = point.time
-
         return start_time, end_time
 
     def get_bounds(self)->Tuple[float, float,float, float]:
-        """
-        Gets the latitude and longitude bounds of the segment.
-
-        Returns
-        ----------
-        bounds : Bounds named tuple
-            min_latitude : float
-                Minimum latitude of segment in decimal degrees [-90, 90]
-            max_latitude : float
-                Maxium latitude of segment in decimal degrees [-90, 90]
-            min_longitude : float
-                Minium longitude of segment in decimal degrees [-180, 180]
-            max_longitude : float
-                Maxium longitude of segment in decimal degrees [-180, 180]
-        """
         min_lat:float = min(map(lambda pt : pt.latitude, self.points))
         max_lat:float = max(map(lambda pt : pt.latitude, self.points))
         min_lon:float = min(map(lambda pt : pt.longitude, self.points))
@@ -148,55 +119,16 @@ class GPXTrackSegment:
 
         return (last.time - first.time).total_seconds()
 
+    def to_xml(self)->str:
 
-    def get_location_at(self, time:datetime)->Optional[GPXTrackPoint]:
-        """
-        Gets approx. location at given time. Note that, at the moment this
-        method returns an instance of GPXTrackPoint in the future -- this may
-        be a mod_geo.Location instance with approximated latitude, longitude
-        and elevation!
-        """
-        if not self.points:
-            return None
+        result:List[str] = ['\n<trkseg>',]
+        points:List[str] = [p.to_xml() for p in self._points]
+        if points:
+            result.extend(points)
+        result.append('\n</trkseg>')
+        return ''.join(result)
 
-        first = 0
-        while not self.points[first]:
-            first += 1
-        if first.time >= time:
-            return self.points[first]
 
-        last = -1
-        while not last.time:
-            last -= 1
-        if last.time <= time:
-            return self.points[last]
-
-        p1 = self.points[first]
-        p2 = self.points[last]
-        lat:float = round((p1.latitude+p2.latitude)/2. ,7)
-        lon:float = round((p1.longitude + p2.longitude) / 2., 7)
-        return GPXTrackPoint(str(lat), str(lon), None)
-
-    def get_nearest_location(self, location:TrackPoint)->Optional[Tuple[GPXTrackPoint, int]]:
-        """ Return the (location, track_point_no) on this track segment """
-        if not self.points:
-            return None
-
-        result:GPXTrackPoint = None
-        current_distance:float = None
-        result_track_point_no:int = None
-        for i in range(len(self.points)):
-            track_point:GPXTrackPoint = self.points[i]
-            if not result:
-                result = track_point
-            else:
-                distance:float = track_point.distance_2d(location)
-                if not current_distance or distance < current_distance:
-                    current_distance = distance
-                    result = track_point
-                    result_track_point_no = i
-
-        return result, result_track_point_no
 
     def clone(self):
         return mod_copy.deepcopy(self)

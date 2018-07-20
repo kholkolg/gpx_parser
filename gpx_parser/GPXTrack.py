@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from typing import Union, Optional, List, Iterator, Iterable, Tuple
 import copy as mod_copy
 
-from gpx_parser import GPXTrackPoint
+from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint
 from gpx_parser.GPXTrackSegment import GPXTrackSegment as TrackSegment
 
 
@@ -58,7 +58,7 @@ class GPXTrack:
         return self._segments
 
     @property
-    def points(self)->List[GPXTrackPoint]:
+    def points(self)->List[TrackPoint]:
         return [pt for seg in self._segments for pt in seg.points]
 
     def get_points_no(self)->int:
@@ -114,73 +114,51 @@ class GPXTrack:
             return None
 
 
-    def get_center(self)->Optional[GPXTrackPoint]:
-        if not self.segments:
-            return None
-        points = self.points
-        lat = sum(map(lambda pt :pt.latitude, points))/len(points)
-        lon = sum(map(lambda pt : pt.longitude, points))/len(points)
+    def to_xml(self)->str:
+        result:List[str] = ['\n<trk>',]
+        if  self._name:
+            result.append('\n<name>{}</name>'.format(self._name))
+        if self.number is not None:
+            result.append('\n<number>{}</number>'.format(self.number))
+        segs = [seg.to_xml() for seg in self._segments]
+        if segs:
+            result.extend(segs)
 
-        return GPXTrackPoint(lat, lon)
+        result +='\n</trk>'
+
+        return ''.join(result)
 
 
-    def get_nearest_location(self, location:GPXTrackPoint)->Optional[Tuple[GPXTrackPoint,
-                                                                           int,
-                                                                           int]]:
-        """ Returns (location, track_segment_no, track_point_no) for nearest location on track """
-        if not self.segments:
-            return None
-
-        result = None
-        distance = None
-        result_track_segment_no = None
-        result_track_point_no = None
-
-        for i in range(len(self.segments)):
-            track_segment = self.segments[i]
-            nearest_location, track_point_no = track_segment.get_nearest_location(location)
-            nearest_location_distance = None
-            if nearest_location:
-                nearest_location_distance = nearest_location.distance_2d(location)
-
-            if not distance or nearest_location_distance < distance:
-                if nearest_location:
-                    distance = nearest_location_distance
-                    result = nearest_location
-                    result_track_segment_no = i
-                    result_track_point_no = track_point_no
-
-        return result, result_track_segment_no, result_track_point_no
 
 
     def clone(self):
         return mod_copy.deepcopy(self)
 
 
-if __name__ == '__main__':
-
-    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
-
-    x = "50.0164596"
-    y =  "14.4547907"
-    p1 = TrackPoint(x, y, '2017-11-22T07:03:36Z')
-    p2 = TrackPoint(y, x)
-    p3 = TrackPoint(y,y, '2617-11-13T08:11:09Z')
-    p4 = TrackPoint(x, x)
-    seg1 = TrackSegment([p1, p2, p3])
-    seg2 = TrackSegment([p2, p3, p4])
-    track = GPXTrack('800003627_337', '0')
-    print('Empty track with name and number: ', track)
-    track.append(seg1)
-    print('1 segment added, len = ',  len(track))
-    seg3 = TrackSegment([p4, p1])
-    track.extend([seg2, seg3])
-    print('2 more segments added, len: ', len(track))
-    print('Points in all segments: ', track.get_points_no())
-    print('Slice: ', track[2:])
-    print('Iterator')
-    for s in track:
-        print(s)
-
-    track.remove(seg1)
-    print('1 segment removed: ', len(track))
+# if __name__ == '__main__':
+#
+#     from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
+#
+#     x = "50.0164596"
+#     y =  "14.4547907"
+#     p1 = TrackPoint(x, y, '2017-11-22T07:03:36Z')
+#     p2 = TrackPoint(y, x)
+#     p3 = TrackPoint(y,y, '2617-11-13T08:11:09Z')
+#     p4 = TrackPoint(x, x)
+#     seg1 = TrackSegment([p1, p2, p3])
+#     seg2 = TrackSegment([p2, p3, p4])
+#     track = GPXTrack('800003627_337', '0')
+#     print('Empty track with name and number: ', track)
+#     track.append(seg1)
+#     print('1 segment added, len = ',  len(track))
+#     seg3 = TrackSegment([p4, p1])
+#     track.extend([seg2, seg3])
+#     print('2 more segments added, len: ', len(track))
+#     print('Points in all segments: ', track.get_points_no())
+#     print('Slice: ', track[2:])
+#     print('Iterator')
+#     for s in track:
+#         print(s)
+#
+#     track.remove(seg1)
+#     print('1 segment removed: ', len(track))
