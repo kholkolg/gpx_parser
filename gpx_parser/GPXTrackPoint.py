@@ -45,11 +45,6 @@ class GPXTrackPoint:
                 return None
         return self._time
 
-    def adjust_time(self, delta:timedelta)->None:
-        try:
-            self._time = self.time + delta
-        except TypeError:
-            pass
 
     def time_difference(self, track_point:'GPXTrackPoint')->Optional[float]:
         time1:Optional[datetime] = self.time
@@ -59,13 +54,11 @@ class GPXTrackPoint:
 
         if time1 == time2:
             return 0
-
         delta = time1 - time2 if time1 > time2 else time2 - time1
         return delta.total_seconds()
 
     def speed_between(self, track_point:'GPXTrackPoint')->Optional[float]:
         seconds:float = self.time_difference(track_point)
-
         if not seconds:
             return  None
 

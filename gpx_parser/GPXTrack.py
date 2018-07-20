@@ -1,5 +1,8 @@
-from typing import Union, Optional, List, Iterator, Iterable
+from datetime import timedelta, datetime
+from typing import Union, Optional, List, Iterator, Iterable, Tuple
+import copy as mod_copy
 
+from gpx_parser import GPXTrackPoint
 from gpx_parser.GPXTrackSegment import GPXTrackSegment as TrackSegment
 
 
@@ -54,6 +57,13 @@ class GPXTrack:
     def segments(self)->List[TrackSegment]:
         return self._segments
 
+    @property
+    def points(self)->List[GPXTrackPoint]:
+        return [pt for seg in self._segments for pt in seg.points]
+
+    def get_points_no(self)->int:
+        return sum(map(lambda s : len(s), self._segments))
+
     def append(self, item:TrackSegment):
         self._segments.append(item)
 
@@ -63,18 +73,93 @@ class GPXTrack:
     def remove(self,item:TrackSegment):
         self._segments.remove(item)
 
+    def reduce_points(self, min_distance:float)->None:
+        for seg in self._segments:
+            seg.reduce_points(min_distance)
 
-    def get_points_no(self)->int:
-        """
+    def remove_empty(self)->None:
+        self._segments = [s for s in filter(lambda s : len(s) > 0, self._segments)]
 
-        :return: total number of points in all the segments of the track
-        """
-        return sum([len(seg) for seg in self._segments])
+    def length_2d(self)->float:
+        return sum(map(lambda seg : seg.length_2d(), self._segments ))
+
+    def get_time_bounds(self)->Tuple[datetime, datetime]:
+        start_time = None
+        end_time = None
+
+        for track_segment in self.segments:
+            point_start_time, point_end_time = track_segment.get_time_bounds()
+            if not start_time and point_start_time:
+                start_time = point_start_time
+            if point_end_time:
+                end_time = point_end_time
+
+        return start_time, end_time
+
+    def get_bounds(self)->Tuple[float, float, float, float]:
+
+        all_points = [p for seg  in self._segments for p in seg.points]
+        min_lat = min(map(lambda pt :pt.latitude, all_points))
+        max_lat = max(map(lambda pt :pt.latitude, all_points))
+        min_lon = min(map(lambda pt :pt.longitude, all_points))
+        max_lon = max(map(lambda pt :pt.longitude, all_points))
+
+        return min_lat, max_lat, min_lon, max_lon
+
+
+    def get_duration(self)->Optional[float]:
+        try:
+            return sum(map(lambda seg : seg.get_duration(), self._segments))
+        except TypeError:
+            return None
+
+
+    def get_center(self)->Optional[GPXTrackPoint]:
+        if not self.segments:
+            return None
+        points = self.points
+        lat = sum(map(lambda pt :pt.latitude, points))/len(points)
+        lon = sum(map(lambda pt : pt.longitude, points))/len(points)
+
+        return GPXTrackPoint(lat, lon)
+
+
+    def get_nearest_location(self, location:GPXTrackPoint)->Optional[Tuple[GPXTrackPoint,
+                                                                           int,
+                                                                           int]]:
+        """ Returns (location, track_segment_no, track_point_no) for nearest location on track """
+        if not self.segments:
+            return None
+
+        result = None
+        distance = None
+        result_track_segment_no = None
+        result_track_point_no = None
+
+        for i in range(len(self.segments)):
+            track_segment = self.segments[i]
+            nearest_location, track_point_no = track_segment.get_nearest_location(location)
+            nearest_location_distance = None
+            if nearest_location:
+                nearest_location_distance = nearest_location.distance_2d(location)
+
+            if not distance or nearest_location_distance < distance:
+                if nearest_location:
+                    distance = nearest_location_distance
+                    result = nearest_location
+                    result_track_segment_no = i
+                    result_track_point_no = track_point_no
+
+        return result, result_track_segment_no, result_track_point_no
+
+
+    def clone(self):
+        return mod_copy.deepcopy(self)
 
 
 if __name__ == '__main__':
 
-    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint
+    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
 
     x = "50.0164596"
     y =  "14.4547907"
