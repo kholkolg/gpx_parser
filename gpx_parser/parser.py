@@ -1,5 +1,5 @@
 from typing import Union, IO, Callable
-from xml.etree.ElementTree import ElementTree as ET
+from xml.etree.ElementTree import Element
 
 from gpx_parser.GPX import GPX
 from gpx_parser.GPXTrack import GPXTrack as Track
@@ -10,13 +10,15 @@ from gpx_parser.xml_loader import load_xml
 
 class GPXParser:
 
+    __slots__ = ('gpx', 'xml')
+
     def __init__(self, xml_or_file:Union[str, IO]):
         self.init(xml_or_file)
         self.gpx:GPX = GPX()
 
     def init(self, xml_or_file:Union[str, IO], loader:Callable = load_xml):
         text:str = xml_or_file.read() if hasattr(xml_or_file, 'read') else xml_or_file
-        self.xml:ET = loader(text)
+        self.xml:Element = loader(text)
 
     def parse(self) ->GPX:
         for track in self.xml.iterfind('trk'):

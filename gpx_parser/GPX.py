@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List, Union, Iterator, Iterable, Tuple
 import math as mod_math
-
+import copy
 from gpx_parser.GPXTrack import GPXTrack as Track
 
 
@@ -75,19 +75,16 @@ class GPX:
 
         version:str = self.version if self.version else '1.1'
         creator:str = self.creator if self.creator else 'gpx_parser.py'
+        result = ['<?xml version="1.0" encoding="UTF-8"?>',]
+        result.append('\n<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/')))
+        result.append('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ')
+        result.append('xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/')))
+        result.append('http://www.topografix.com/GPX/{}/gpx.xsd" '.format(version.replace('.','/')))
+        result.extend(['version="%s" '% version, 'creator="%s">'% creator])
 
-        line1:str = '<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/'))
-        line2:str = 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
-        line3:str = 'xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/'))
-        line4:str = 'http://www.topografix.com/GPX/{}/gpx.xsd"'.format(version.replace('.','/'))
-        line5:str = 'version="{}" '.format(version)
-        line6:str = 'creator="{}">'.format(creator)
-
-        tracks = [trk.to_xml() for trk in self._tracks]
-        result = [line1, line2, line3, line4, line5, line6]
-        result.extend(tracks)
+        result.extend(map(lambda t : t.to_xml(), self._tracks))
         result.append('\n</gpx>')
-        return '<?xml version="1.0" encoding="UTF-8"?>\n' + ''.join(result)
+        return  ''.join(result)
 
     def reduce_points(self, max_points_no=None, min_distance=None)->None:
         """
@@ -163,7 +160,7 @@ class GPX:
 
 
     def get_points_no(self):
-        return sum(map(lambda tr: tr.get_point() for tr in self._tracks))
+        return sum(map(lambda tr: tr.get_points_no(), self._tracks))
 
 
 
@@ -197,6 +194,9 @@ class GPX:
                     else:
                         yield point, track_no, segment_no, point_no
 
+
+    def clone(self):
+        return copy.deepcopy(self)
 
 
 if __name__ == '__main__':
