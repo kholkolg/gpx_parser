@@ -1,4 +1,4 @@
-from gpx_parser.GPX import GPX
+from .GPX import GPX
 
 
 def parse(xml_or_file)->GPX:

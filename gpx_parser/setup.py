@@ -5,7 +5,7 @@ setup(
    version='0.1',
    description='Parser for simple gpx data',
    author='Olga',
-   author_email='cbudrud@gmail.com',
+   author_email='',
    license='MIT',
    packages=['gpx_parser'],
    url = 'https://github.com/aicenter/roadmap-processing',

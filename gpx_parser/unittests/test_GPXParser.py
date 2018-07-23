@@ -1,8 +1,10 @@
+from os import path
 from unittest import TestCase, main as ut_main
 from xml.etree.ElementTree import Element as El
-from gpx_parser.GPX import GPX as GPX
-from gpx_parser.parser import GPXParser as Parser
-from os import path
+
+from ..GPX import GPX as GPX
+from ..parser import GPXParser as Parser
+
 
 
 class TestGPXParser(TestCase):

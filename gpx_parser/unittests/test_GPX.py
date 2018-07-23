@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Tuple, List
 from unittest import TestCase, main as ut_main
-from gpx_parser.unittests.test_utils import random_point
-from gpx_parser.GPXTrackSegment import GPXTrackSegment as TS
-from gpx_parser.GPXTrack import GPXTrack as T
-from gpx_parser.GPX import GPX
+
+from .test_utils import random_point
+from ..GPXTrackSegment import GPXTrackSegment as TS
+from ..GPXTrack import GPXTrack as T
+from ..GPX import GPX
 
 
 class TestGPX(TestCase):

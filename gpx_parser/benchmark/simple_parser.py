@@ -1,9 +1,9 @@
 from time import process_time
 from os import path, listdir
 import timeit
-from gpx_parser.xml_loader import  load_xml
-from roadmaptools.load_test.test_utils import  make_result_string
 
+from ..xml_loader import  load_xml
+from .test_utils import make_result_string
 
 
 def parse_file(filename:str)->list:
@@ -23,14 +23,12 @@ def parse_file(filename:str)->list:
         for segment in track.iterfind('trkseg'):
             new_segment = []
             for point in segment.iterfind('trkpt'):
-                new_point = point.attrib #attrib is a dictionary
+                new_point = point.attrib
                 #print(point)
                 new_point['time'] = point.find('time').text
                 print(new_point)
                 new_segment.append(new_point)
             new_track.append(new_segment)
-        # print('Name: ' + track[0].text)
-        # print('Number: ' + track[1].text)
         tracks.append(new_track)
     return tracks
 

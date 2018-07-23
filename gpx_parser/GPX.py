@@ -86,6 +86,8 @@ class GPX:
         result.append('\n</gpx>')
         return  ''.join(result)
 
+
+
     def reduce_points(self, max_points_no=None, min_distance=None)->None:
         """
         Reduces the number of points. Points will be updated in place.

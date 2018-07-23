@@ -1,10 +1,11 @@
 from unittest import TestCase, main as ut_main
 from functools import reduce
 from typing import List
-import operator
-from gpx_parser.unittests.test_utils import random_point
-from gpx_parser.GPXTrackPoint import GPXTrackPoint as TP
-from gpx_parser.GPXTrackSegment import GPXTrackSegment as TS
+from operator import and_
+
+from .test_utils import random_point
+from ..GPXTrackPoint import GPXTrackPoint as TP
+from ..GPXTrackSegment import GPXTrackSegment as TS
 
 
 class TestGPXTrackSegment(TestCase):
@@ -22,7 +23,7 @@ class TestGPXTrackSegment(TestCase):
     def test_points_getter(self):
         self.assertListEqual([], self.seg0.points)
         self.assertEqual(10, len(self.seg1))
-        self.assertTrue(reduce(operator.and_, map(lambda x :isinstance(x, TP), self.seg1), True))
+        self.assertTrue(reduce(and_, map(lambda x :isinstance(x, TP), self.seg1), True))
 
     def test_points_setter(self):
         new_points:List[TP] = [random_point() for i in range(12)]

@@ -1,9 +1,5 @@
 from random import uniform as uf, randrange
 from gpx_parser.GPXTrackPoint import GPXTrackPoint as TP
-from gpx_parser.GPXTrackSegment import GPXTrackSegment as TS
-from gpx_parser.GPXTrack import GPXTrack as T
-from gpx_parser.utils import parse_time
-
 
 
 
@@ -20,7 +16,6 @@ def random_time()->str:
     minute = str2(randrange(60))
     sec = str2(randrange(60))
     return '2018-%s-%sT%s:%s:%sZ'% (month, day, hour, minute, sec)
-
 
 def str2(num:int)->str:
     return str(num) if num >= 10 else '0' + str(num)

@@ -1,8 +1,8 @@
 from unittest import TestCase, main as ut_main
 from datetime import datetime
 
-from gpx_parser.unittests.test_utils import random_point
-from gpx_parser.GPXTrackPoint import GPXTrackPoint as TP
+from .test_utils import random_point
+from ..GPXTrackPoint import GPXTrackPoint as TP
 
 class TestGPXTrackPoint(TestCase):
 

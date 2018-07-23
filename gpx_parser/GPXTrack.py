@@ -57,9 +57,16 @@ class GPXTrack:
     def segments(self)->List[TrackSegment]:
         return self._segments
 
+    @segments.setter
+    def segments(self, segments:List[TrackSegment])->None:
+        self._segments = segments
+        
+
     @property
     def points(self)->List[TrackPoint]:
         return [pt for seg in self._segments for pt in seg.points]
+
+
 
     def get_points_no(self)->int:
         return sum(map(lambda s : len(s), self._segments))
