@@ -39,7 +39,7 @@ class GPX:
         return iter(self._tracks)
 
     @property
-    def tracks(self):
+    def tracks(self)->List[Track]:
         return self._tracks
 
     @tracks.setter
@@ -82,7 +82,8 @@ class GPX:
         result.append('http://www.topografix.com/GPX/{}/gpx.xsd" '.format(version.replace('.','/')))
         result.extend(['version="%s" '% version, 'creator="%s">'% creator])
 
-        result.extend(map(lambda t : t.to_xml(), self._tracks))
+        result.extend(map(lambda t : t.to_xml(), self.tracks))
+        #result.extend([tr.to_xml for tr in self.tracks if tr])
         result.append('\n</gpx>')
         return  ''.join(result)
 

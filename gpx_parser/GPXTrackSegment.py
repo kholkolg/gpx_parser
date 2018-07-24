@@ -3,7 +3,7 @@ from typing import Union, Optional, List, Iterator, Iterable, Tuple
 import copy as mod_copy
 
 
-from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
+from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint
 
 
 class GPXTrackSegment:
@@ -111,8 +111,8 @@ class GPXTrackSegment:
         if len(self.points) < 2:
             return 0
 
-        first:GPXTrackPoint = self.points[0]
-        last:GPXTrackPoint = self.points[-1]
+        first:TrackPoint = self.points[0]
+        last:TrackPoint = self.points[-1]
         if not first.time or not last.time:
             print('Time data is missing')
             return None

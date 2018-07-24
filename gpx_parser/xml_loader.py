@@ -16,7 +16,6 @@ def load_xml(xml_string:str, ET = mod_etree) ->ElementTree:
     :return: ElementTree
     """
     xml_string = sub(r'\sxmlns="[^"]+"', '', xml_string , count=1)
-    #print(xml_string)
     #print('Size of xml string = ', getsizeof(xml_string))
 
     root = ET.fromstring(xml_string)

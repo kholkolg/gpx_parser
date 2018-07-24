@@ -1,6 +1,6 @@
 from math import cos, pi, sqrt
 from datetime import datetime,timedelta
-from typing import Optional, Callable, Tuple
+from typing import Optional, Callable, Tuple, List
 from collections import namedtuple
 from gpx_parser.utils import parse_time
 
@@ -12,6 +12,8 @@ class GPXTrackPoint:
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None)->None:
         #TODO make it named tuple
+        #TODO parameters can be floats and datetime ??
+        # by now i've just changed it in process_gps_data._load _...csv
         self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
 
     def __repr__(self)->str:
@@ -48,12 +50,12 @@ class GPXTrackPoint:
         return self._time
 
     def to_xml(self)->str:
-        xml:str = '\n<trkpt lat="{}" lon="{}"'.format(self.latitude, self.longitude)
-        if not self.time:
-            return xml+'>'
-        else:
-            xml+='>\n<time>{}</time>\n</trkpt>'.format(self._strings[2])
-        return xml
+        #TODO use strings from self._strings instead of converted values
+        result:List[str] = ['\n<trkpt lat="%s" lon="%s">'%(self.latitude, self.longitude)]
+        if  self.time:
+            result.append('\n<time>{}</time>'.format(self._strings[2]))
+        result.append('\n</trkpt>')
+        return ''.join(result)
 
     def time_difference(self, track_point:'GPXTrackPoint')->Optional[float]:
         time1:Optional[datetime] = self.time

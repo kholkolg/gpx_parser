@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../Future-Config/.idea/Future-Config.iml" filepath="$PROJECT_DIR$/../Future-Config/.idea/Future-Config.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../gpx2/.idea/gpx2.iml" filepath="$PROJECT_DIR$/../gpx2/.idea/gpx2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/gpx_parser.iml" filepath="$PROJECT_DIR$/.idea/gpx_parser.iml" />
       <module fileurl="file://$PROJECT_DIR$/../machine_learning/.idea/machine_learning.iml" filepath="$PROJECT_DIR$/../machine_learning/.idea/machine_learning.iml" />
       <module fileurl="file://$PROJECT_DIR$/../roadmap-processing/.idea/roadmap-processing.iml" filepath="$PROJECT_DIR$/../roadmap-processing/.idea/roadmap-processing.iml" />

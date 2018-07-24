@@ -10,5 +10,23 @@
         </value>
       </option>
     </inspection_tool>
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="10">
+            <item index="0" class="java.lang.String" itemvalue="geojson" />
+            <item index="1" class="java.lang.String" itemvalue="scipy" />
+            <item index="2" class="java.lang.String" itemvalue="fconfig.egg" />
+            <item index="3" class="java.lang.String" itemvalue="scikit_learn" />
+            <item index="4" class="java.lang.String" itemvalue="matplotlib" />
+            <item index="5" class="java.lang.String" itemvalue="roadmaptools" />
+            <item index="6" class="java.lang.String" itemvalue="googlemaps" />
+            <item index="7" class="java.lang.String" itemvalue="numpy" />
+            <item index="8" class="java.lang.String" itemvalue="roadmaptools.egg" />
+            <item index="9" class="java.lang.String" itemvalue="Pillow" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
   </profile>
 </component>

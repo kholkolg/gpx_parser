@@ -60,12 +60,11 @@ class GPXTrack:
     @segments.setter
     def segments(self, segments:List[TrackSegment])->None:
         self._segments = segments
-        
+
 
     @property
     def points(self)->List[TrackPoint]:
         return [pt for seg in self._segments for pt in seg.points]
-
 
 
     def get_points_no(self)->int:
@@ -120,7 +119,6 @@ class GPXTrack:
         except TypeError:
             return None
 
-
     def to_xml(self)->str:
         result:List[str] = ['\n<trk>',]
         if  self._name:
@@ -130,12 +128,8 @@ class GPXTrack:
         segs = [seg.to_xml() for seg in self._segments]
         if segs:
             result.extend(segs)
-
         result +='\n</trk>'
-
         return ''.join(result)
-
-
 
 
     def clone(self):

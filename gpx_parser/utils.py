@@ -2,11 +2,16 @@ from datetime import datetime
 from typing import Callable, Dict, Optional
 
 
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
-def parse_time(string:str, time_format:str=DATE_FORMAT, parser:Callable = datetime.strptime)->datetime:
-    return parser(string, time_format)
+
+def parse_time(string:str, parser:Callable = datetime.strptime)->datetime:
+    DATE_FORMATS = ['%Y-%m-%dT%H:%M:%SZ', "%Y-%m-%dT%H:%M:%S.%fZ"]
+    for time_format in DATE_FORMATS:
+        try:
+            return parser(string, time_format)
+        except ValueError:
+            pass
 
 
 def to_xml(tag:str, attributes:Optional[Dict[str, str]]=None,
