@@ -6,18 +6,32 @@ from gpx_parser.GPXTrack import GPXTrack as Track
 
 
 class GPX:
+    """
+    Container for GPXTracks. This class represents the root element of gpx file.
+    All constructor arguments are optional.
 
+
+    Attributes:
+        version: version of gpx schema
+        creator: application that created the gpx
+        tracks: list of tracks in this gpx
+    """
 
     __slots__ = ('_version', '_creator', '_tracks')
 
     def __init__(self, version:Optional[str]=None, creator:Optional[str]=None, tracks:Optional[List[Track]]=None):
+        """
+        :param version: version of gpx schema
+        :param creator: application that created the data
+        :param tracks: list of tracks
+        """
         self._version:Optional[str] = version
         self._creator:Optional[str] = creator
         self._tracks:List[Track] = tracks if tracks else []
 
 
     def __repr__(self)->str:
-        return 'GPX(%s)(tracks=%s)' % (len(self._tracks), self._tracks)
+        return '<GPX [..%s tracks..]>' % len(self._tracks)
 
     def __getitem__(self, key:Union[int, slice])-> Union[Track,List[Track]]:
         if isinstance(key, int):
@@ -41,16 +55,16 @@ class GPX:
         return self._tracks
 
     @tracks.setter
-    def tracks(self, tracks:List[Track]):
-        self._tracks = tracks
+    def tracks(self, items:List[Track]):
+        self._tracks = items
 
     @property
     def version(self)->str:
         return self._version
 
     @version.setter
-    def version(self, ver:str):
-        self._version = ver
+    def version(self, version:str):
+        self._version = version
 
     @property
     def creator(self)->str:
@@ -70,17 +84,22 @@ class GPX:
         self._tracks.remove(item)
 
     def to_xml(self)->str:
+        """
+        Converts gpx instance to xml.
+        :return: xml string
+        """
         version:str = self.version if self.version else '1.1'
         creator:str = self.creator if self.creator else 'gpx_parser.py'
+        version_ns:str = version.replace('.','/')
         result:List[str] = ['<?xml version="1.0" encoding="UTF-8"?>',
-                            '\n<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/')),
+                            '\n<gpx xmlns="http://www.topografix.com/GPX/%s" ' % version_ns,
                             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ',
-                            'xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/')),
-                            'http://www.topografix.com/GPX/{}/gpx.xsd" '.format(version.replace('.','/')),
+                            'xsi:schemaLocation="http://www.topografix.com/GPX/%s ' % version_ns,
+                            'http://www.topografix.com/GPX/%s/gpx.xsd" '% version_ns,
                             'version="%s" '% version,
                             'creator="%s">'% creator]
 
-        result.extend(map(lambda t : t.to_xml(), self.tracks))
+        result.extend(map(lambda trk : trk.to_xml(), self.tracks))
         result.append('\n</gpx>')
         return  ''.join(result)
 
@@ -88,16 +107,13 @@ class GPX:
 
     def reduce_points(self, max_points_no=None, min_distance=None)->None:
         """
-        Reduces the number of points. Points will be updated in place.
+        Reduces the number of points in  gpx instance.
 
-        Parameters
-        ----------
-
-        max_points : int
-            The maximum number of points to include in the GPX
-        min_distance : float
-            The minimum separation in meters between points
+        :param max_points_no: maximum number of points to be left
+        :param min_distance: minimum distance between two points in meters
+        :return:
         """
+
         if max_points_no is None and min_distance is None:
             raise ValueError("Either max_point_no or min_distance must be supplied")
 

@@ -50,8 +50,9 @@ class TestGPXTrackPoint(TestCase):
         self.assertIsNone(self.point3.time_difference(self.point4))
 
 
+
     def test_distance_2d(self):
-        print('distance etween: %s and %s = %.3f' % (self.point1,
+        print('distance between: %s and %s = %.3f' % (self.point1,
                                                      self.point2,
                                                     self.point1.distance_2d(self.point2)))
 

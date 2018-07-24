@@ -7,8 +7,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Future-Config" />
-    <orderEntry type="module" module-name="machine_learning" />
     <orderEntry type="module" module-name="roadmap-processing" />
+    <orderEntry type="module" module-name="machine_learning" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />

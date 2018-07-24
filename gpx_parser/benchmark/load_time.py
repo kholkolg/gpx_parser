@@ -5,10 +5,10 @@ from os import path, listdir
 from time import process_time
 
 
-from gpxpy.parser import GPXParser as OriginalParser
-from ..parser import GPXParser as MyParser
-from .test_utils import  make_result_string, get_time
-from ..GPX import  GPX
+#from gpxpy.parser import GPXParser as OriginalParser
+from gpx_parser.parser import GPXParser as MyParser
+from gpx_parser.benchmark.test_utils import  make_result_string, get_time
+from gpx_parser.GPX import  GPX
 
 
 MB = 1000*1000
@@ -31,11 +31,11 @@ def  measure_load1(fname:str):
     parser.parse()
 
 
-@timer
-def  measure_load2(fname:str):
-    with open(fname, 'r') as xml_file:
-        parser =  OriginalParser(xml_file)
-    parser.parse()
+# @timer
+# def  measure_load2(fname:str):
+#     with open(fname, 'r') as xml_file:
+#         parser =  OriginalParser(xml_file)
+#     parser.parse()
 
 
 @timer
@@ -76,6 +76,6 @@ def measure_time(func:Callable, test_dir:str, result_dir:str, result_name:str, *
 TEST_DIR = "/home/olga/Documents/GPX/load_test"
 RESULTS_DIR = "/home/olga/Documents/GPX/test_results"
 
-measure_time(measure_load1, TEST_DIR, RESULTS_DIR,  'final_load_mine_')
-measure_time(measure_load2, TEST_DIR, RESULTS_DIR,  'final_load_other_')
-measure_time(measure_conversion, TEST_DIR, RESULTS_DIR,  'final_load_conversion_mine_')
+# measure_time(measure_load1, TEST_DIR, RESULTS_DIR,  'final_load_mine_')
+# measure_time(measure_load2, TEST_DIR, RESULTS_DIR,  'final_load_other_')
+measure_time(measure_conversion, TEST_DIR, RESULTS_DIR,  'try_except_conv_')

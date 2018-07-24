@@ -1,4 +1,6 @@
-from .GPX import GPX
+name='gpx-parser'
+
+from gpx_parser.GPX import GPX
 
 
 def parse(xml_or_file)->GPX:
@@ -15,8 +17,7 @@ def parse(xml_or_file)->GPX:
     xml node if possible, if not then version 1.0 will be used).
     """
 
-    from . import parser as mod_parser
+    from . import parser
 
-    parser = mod_parser.GPXParser(xml_or_file)
-    print("PARSER INIT")
+    parser = parser.GPXParser(xml_or_file)
     return parser.parse()

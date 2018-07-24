@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 from typing import Union, Optional, List, Iterator, Iterable, Tuple
 import copy as mod_copy
 
@@ -13,7 +13,7 @@ class GPXTrack:
     def __init__(self, name:Optional[str]=None, number:Optional[str]=None, segments:Optional[List[TrackSegment]]=None):
         self._name:Optional[str] = name
         self._number:Optional[int] = int(number) if number else None
-        self._segments:List[TrackSegment] = segments if segments else [] # use sets instead??
+        self._segments:List[TrackSegment] = segments if segments else []
 
     def __repr__(self)->str:
         return 'GPXTrack(%s  %s)(%s)(segments=%s)' % (self._name, self._number, len(self._segments), self._segments)
@@ -60,7 +60,6 @@ class GPXTrack:
     @segments.setter
     def segments(self, segments:List[TrackSegment])->None:
         self._segments = segments
-
 
     @property
     def points(self)->List[TrackPoint]:
@@ -135,7 +134,7 @@ class GPXTrack:
 
 if __name__ == '__main__':
 
-    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
+    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint
 
     x = "50.0164596"
     y =  "14.4547907"

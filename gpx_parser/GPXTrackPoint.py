@@ -1,6 +1,6 @@
 from math import cos, pi, sqrt
 from datetime import datetime,timedelta
-from typing import Optional, Callable, Tuple, List
+from typing import Optional, Callable, List
 from collections import namedtuple
 from gpx_parser.utils import parse_time
 
@@ -12,7 +12,8 @@ class GPXTrackPoint:
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None)->None:
         #self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
-        self._strings = Point(lat, lon, time)
+        self._strings:Point = Point(lat, lon, time)
+
 
     def __repr__(self)->str:
         return '<GPXTrackPoint(%s, %s, %s)>'% self._strings
@@ -36,15 +37,20 @@ class GPXTrackPoint:
             self._lon: float = float(self._strings.lon)
         return self._lon
 
+
     @property
     def time(self, converter:Callable = parse_time)-> Optional[datetime]:
         try:
             return self._time
         except AttributeError:
-            try:
-                self._time: datetime = converter(self._strings.time)
-            except TypeError:
-                return None
+            # try:
+            #     self._time: datetime = converter(self._strings.time)
+            # except TypeError:
+            #     return None
+            if self._strings.time:
+                self._time:Optional[datetime] = converter(self._strings.time)
+            else:
+                self._time:Optional[datetime]  = None
         return self._time
 
     def to_xml(self)->str:

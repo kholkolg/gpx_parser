@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 from typing import Union, Optional, List, Iterator, Iterable, Tuple
 import copy as mod_copy
 
