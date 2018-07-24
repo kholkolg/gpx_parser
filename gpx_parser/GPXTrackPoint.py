@@ -11,10 +11,8 @@ class GPXTrackPoint:
     __slots__ = ('_lat', '_lon', '_time', '_strings')
 
     def __init__(self, lat:str, lon:str, time:Optional[str]=None)->None:
-        #TODO make it named tuple
-        #TODO parameters can be floats and datetime ??
-        # by now i've just changed it in process_gps_data._load _...csv
-        self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
+        #self._strings:Tuple[str, str, Optional[str]] = (lat, lon, time)
+        self._strings = Point(lat, lon, time)
 
     def __repr__(self)->str:
         return '<GPXTrackPoint(%s, %s, %s)>'% self._strings
@@ -27,7 +25,7 @@ class GPXTrackPoint:
         try:
             return self._lat
         except AttributeError:
-            self._lat:float = float(self._strings[0])
+            self._lat:float = float(self._strings.lat)
         return self._lat
 
     @property
@@ -35,7 +33,7 @@ class GPXTrackPoint:
         try:
             return self._lon
         except AttributeError:
-            self._lon: float = float(self._strings[1])
+            self._lon: float = float(self._strings.lon)
         return self._lon
 
     @property
@@ -44,18 +42,19 @@ class GPXTrackPoint:
             return self._time
         except AttributeError:
             try:
-                self._time: datetime = converter(self._strings[2])
+                self._time: datetime = converter(self._strings.time)
             except TypeError:
                 return None
         return self._time
 
     def to_xml(self)->str:
-        #TODO use strings from self._strings instead of converted values
-        result:List[str] = ['\n<trkpt lat="%s" lon="%s">'%(self.latitude, self.longitude)]
+        result:List[str] = ['\n<trkpt lat="', self._strings.lat,
+                           '" lon="', self._strings.lon, '">']
         if  self.time:
-            result.append('\n<time>{}</time>'.format(self._strings[2]))
+            result.extend(['\n<time>', self._strings.time, '</time>'])
         result.append('\n</trkpt>')
         return ''.join(result)
+
 
     def time_difference(self, track_point:'GPXTrackPoint')->Optional[float]:
         time1:Optional[datetime] = self.time
@@ -105,3 +104,4 @@ if __name__ == '__main__':
 
     print('p0.speed_between(p1) =', p0.speed_between(p1))
     print('p0.speed_between(p2) =', p0.speed_between(p2))
+    print(p1.to_xml())

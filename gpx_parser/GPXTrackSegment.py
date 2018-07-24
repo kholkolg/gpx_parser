@@ -57,8 +57,6 @@ class GPXTrackSegment:
     def get_points_no(self)->int:
         """
         Gets the number of points in segment.
-        TODO remove??
-
         """
         return len(self._points)
 
