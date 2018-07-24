@@ -6,9 +6,7 @@ from gpx_parser.GPXTrack import GPXTrack as Track
 
 
 class GPX:
-    """
-    
-    """
+
 
     __slots__ = ('_version', '_creator', '_tracks')
 
