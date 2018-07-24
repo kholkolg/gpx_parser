@@ -72,18 +72,17 @@ class GPX:
         self._tracks.remove(item)
 
     def to_xml(self)->str:
-
         version:str = self.version if self.version else '1.1'
         creator:str = self.creator if self.creator else 'gpx_parser.py'
-        result = ['<?xml version="1.0" encoding="UTF-8"?>',]
-        result.append('\n<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/')))
-        result.append('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ')
-        result.append('xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/')))
-        result.append('http://www.topografix.com/GPX/{}/gpx.xsd" '.format(version.replace('.','/')))
-        result.extend(['version="%s" '% version, 'creator="%s">'% creator])
+        result:List[str] = ['<?xml version="1.0" encoding="UTF-8"?>',
+                            '\n<gpx xmlns="http://www.topografix.com/GPX/{}" '.format(version.replace('.','/')),
+                            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ',
+                            'xsi:schemaLocation="http://www.topografix.com/GPX/{} '.format(version.replace('.','/')),
+                            'http://www.topografix.com/GPX/{}/gpx.xsd" '.format(version.replace('.','/')),
+                            'version="%s" '% version,
+                            'creator="%s">'% creator]
 
         result.extend(map(lambda t : t.to_xml(), self.tracks))
-        #result.extend([tr.to_xml for tr in self.tracks if tr])
         result.append('\n</gpx>')
         return  ''.join(result)
 
@@ -128,17 +127,6 @@ class GPX:
 
 
     def get_time_bounds(self)->Tuple[datetime, datetime]:
-        """
-        Gets the time bounds (start and end) of the GPX file.
-
-        Returns
-        ----------
-        time_bounds : TimeBounds named tuple
-            start_time : datetime
-                Start time of the first segment in track
-            end time : datetime
-                End time of the last segment in track
-        """
         start_time = None
         end_time = None
 

@@ -122,44 +122,41 @@ class GPXTrack:
     def to_xml(self)->str:
         result:List[str] = ['\n<trk>',]
         if  self._name:
-            result.append('\n<name>{}</name>'.format(self._name))
+            result.extend(['\n<name>',self._name,'</name>'])
         if self.number is not None:
-            result.append('\n<number>{}</number>'.format(self.number))
-        segs = [seg.to_xml() for seg in self._segments]
-        if segs:
-            result.extend(segs)
+            result.extend(['\n<number>', str(self._number), '</number>'])
+        result.extend(map(lambda s : s.to_xml(), self._segments))
         result +='\n</trk>'
         return ''.join(result)
-
 
     def clone(self):
         return mod_copy.deepcopy(self)
 
 
-# if __name__ == '__main__':
-#
-#     from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
-#
-#     x = "50.0164596"
-#     y =  "14.4547907"
-#     p1 = TrackPoint(x, y, '2017-11-22T07:03:36Z')
-#     p2 = TrackPoint(y, x)
-#     p3 = TrackPoint(y,y, '2617-11-13T08:11:09Z')
-#     p4 = TrackPoint(x, x)
-#     seg1 = TrackSegment([p1, p2, p3])
-#     seg2 = TrackSegment([p2, p3, p4])
-#     track = GPXTrack('800003627_337', '0')
-#     print('Empty track with name and number: ', track)
-#     track.append(seg1)
-#     print('1 segment added, len = ',  len(track))
-#     seg3 = TrackSegment([p4, p1])
-#     track.extend([seg2, seg3])
-#     print('2 more segments added, len: ', len(track))
-#     print('Points in all segments: ', track.get_points_no())
-#     print('Slice: ', track[2:])
-#     print('Iterator')
-#     for s in track:
-#         print(s)
-#
-#     track.remove(seg1)
-#     print('1 segment removed: ', len(track))
+if __name__ == '__main__':
+
+    from gpx_parser.GPXTrackPoint import GPXTrackPoint as TrackPoint, GPXTrackPoint
+
+    x = "50.0164596"
+    y =  "14.4547907"
+    p1 = TrackPoint(x, y, '2017-11-22T07:03:36Z')
+    p2 = TrackPoint(y, x)
+    p3 = TrackPoint(y,y, '2617-11-13T08:11:09Z')
+    p4 = TrackPoint(x, x)
+    seg1 = TrackSegment([p1, p2, p3])
+    seg2 = TrackSegment([p2, p3, p4])
+    track = GPXTrack('800003627_337', '0')
+    print('Empty track with name and number: ', track)
+    track.append(seg1)
+    print('1 segment added, len = ',  len(track))
+    seg3 = TrackSegment([p4, p1])
+    track.extend([seg2, seg3])
+    print('2 more segments added, len: ', len(track))
+    print('Points in all segments: ', track.get_points_no())
+    print('Slice: ', track[2:])
+    print('Iterator')
+    for s in track:
+        print(s)
+
+    track.remove(seg1)
+    print('1 segment removed: ', len(track))

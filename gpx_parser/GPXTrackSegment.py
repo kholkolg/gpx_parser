@@ -118,19 +118,13 @@ class GPXTrackSegment:
         return (last.time - first.time).total_seconds()
 
     def to_xml(self)->str:
-
         result:List[str] = ['\n<trkseg>',]
-        points:List[str] = [p.to_xml() for p in self._points]
-        if points:
-            result.extend(points)
+        result.extend(map(lambda p : p.to_xml(), self._points))
         result.append('\n</trkseg>')
         return ''.join(result)
 
-
-
     def clone(self):
         return mod_copy.deepcopy(self)
-
 
 
 if __name__ == '__main__':
