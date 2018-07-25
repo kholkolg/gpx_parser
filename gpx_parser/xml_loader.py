@@ -1,9 +1,7 @@
 from re import sub
 
-try:
-    import xml.etree.ElementTree as mod_etree
-except ImportError:
-    import xml.etree.ElementTree as mod_etree
+import xml.etree.ElementTree as mod_etree
+
 
 #from sys import  getsizeof
 
