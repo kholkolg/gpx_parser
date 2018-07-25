@@ -1,0 +1,9 @@
+
+#idea
+.idea/
+
+# python
+*.pyc
+/python/.idea/
+/python/fconfig.egg-info/
+/python/fconfig/__pycache__/

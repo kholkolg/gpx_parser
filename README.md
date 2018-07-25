@@ -49,7 +49,7 @@ gpx.contains(track)          # = gpx.tracks.contains(track)
 gpx.append(track)            # = gpx.tracks.append(track)
 gpx.extend(tracks)           # = gpx.tracks.extend(tracks)
 gpx.remove(track)            # = gpx.tracks.remove(tracks)
-gpx.clone()
+gpx.clone()                  #  returns deepcoopy of the object   
 
 gpx.to_xml()                 # str, point with xml tags
 gpx.length_2d()              # total 2d  distance of the track
@@ -72,12 +72,14 @@ gpx.walk()                   # generator, yields (point, track_num, segment_num,
  track.append(segment)      #
  track.extend(segmengs)     #
  track.remove(segment)      #
+
  
  track.to_xml()             #
  track.length_2d()          # same as for gpx
  track.get_bounds()         #
  track.get_time_bounds()    #
- track.get_points_no()  
+ track.get_points_no()      #
+ track.clone()              #
  
  track.get_duration()      # float, duration of track in seconds
  track.remove_empty()      # removes empty segments from the track
@@ -95,15 +97,17 @@ gpx.walk()                   # generator, yields (point, track_num, segment_num,
  seg.append(segment)      #
  seg.extend(segmengs)     #
  seg.remove(segment)      #
+
  
  seg.to_xml()             #
  seg.length_2d()          # same as for gpx
  seg.get_bounds()         #
  seg.get_time_bounds()    #
- seg.get_points_no()  
+ seg.get_points_no()      #
+ seg.clone()              # 
  
- seg.get_duration()      # float, duration of track in seconds
- seg.remove_empty()      # removes empty segments from the track
+ seg.get_duration()       # float, duration of track in seconds
+ seg.remove_empty()       # removes empty segments from the track
 
 ```
  ##### GPXTrackPoint

@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$/../Future-Config" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../machine_learning" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../map-matching-benchmark" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../roadmap-processing" vcs="Git" />
   </component>
 </project>
