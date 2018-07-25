@@ -43,10 +43,6 @@ class GPXTrackPoint:
         try:
             return self._time
         except AttributeError:
-            # try:
-            #     self._time: datetime = converter(self._strings.time)
-            # except TypeError:
-            #     return None
             if self._strings.time:
                 self._time:Optional[datetime] = converter(self._strings.time)
             else:
@@ -111,3 +107,4 @@ if __name__ == '__main__':
     print('p0.speed_between(p1) =', p0.speed_between(p1))
     print('p0.speed_between(p2) =', p0.speed_between(p2))
     print(p1.to_xml())
+    print(p2.to_xml())

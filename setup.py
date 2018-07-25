@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="gpx-parser",
-    version="0.0.3",
+    version="0.0.4",
     author='Olga Kholkovskaia',
     author_email='olga.kholkovskaia@gmail.com',
     license='MIT',
@@ -15,7 +15,7 @@ setup(
     url='https://github.com/kholkolg/gpx_parser',
     download_url='https://github.com/kholkolg/gpx_parser/',
     packages=['gpx_parser'],
-    install_requires=['typing==3.6.2'],
+    install_requires=['typing>=3.6.2'],
     classifiers=(
         "Programming Language :: Python :: 3.4",
         "License :: OSI Approved :: MIT License",

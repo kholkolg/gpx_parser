@@ -2,6 +2,15 @@
 #idea
 .idea/
 
+#tests
+/unittests
+/benchmark
+
+#builds
+/build
+/dist
+/*.egg-info
+
 # python
 *.pyc
 /python/.idea/

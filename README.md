@@ -1,6 +1,6 @@
-# gpx-parser
+# gpx-lite
 
-Simple parser for loading basic information about track points from .gpx files.
+Simple parser for  loading basic information about track points from .gpx files.
 Inside the gpx tag parser only extracts trk, trkseg, and trkpt tags.
 All other tags are ignored.
 Resulting GPX structure is a container with track list. Each track is in it's turn a list of segments, and segment is
@@ -11,7 +11,7 @@ GPX, GPXTrack, an GPXTrackSegment support most of the list methods.
 ### Prerequisites
 Python 3.4 or higher
 
-xml or lxml
+Typing 3.6.2
 
 
 ### Examples of usage

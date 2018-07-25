@@ -7,6 +7,9 @@ from gpx_parser.GPXTrackSegment import GPXTrackSegment as TrackSegment
 
 
 class GPXTrack:
+    """
+
+    """
 
     __slots__ = ('_name', '_number', '_segments')
 
