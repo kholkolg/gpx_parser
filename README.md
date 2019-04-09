@@ -28,7 +28,7 @@ for track in gpx:
     print('Track with {} segments and {} points'.
           format(len(track), track.get_points_no()))
     for segment in track:
-        print('Segment with %s points % len(segment))
+        print('Segment with %s points % len(segment)')
         for point in segment:
             print(point)
             
